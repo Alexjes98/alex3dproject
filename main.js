@@ -15,15 +15,17 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
+const helper = new THREE.CameraHelper(camera);
+scene.add(helper);
 const renderer = new THREE.WebGL1Renderer({
   canvas: document.querySelector("#bg"),
 });
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
+camera.position.setX(0);
+camera.position.setY(0);
 camera.position.setZ(50);
-camera.position.setX(-50);
-camera.position.setY(50);
 camera.lookAt(0, 0, 0);
 
 renderer.render(scene, camera);
@@ -58,12 +60,9 @@ function createPlanet(
       size: 2,
       height: 1,
     });
-    const textMaterial = new THREE.MeshPhongMaterial({
-      color: 0xff0000,
-      specular: 0xffffff,
-    });
+    const textMaterial = new THREE.MeshNormalMaterial({ color: 0xff0000 });
     const mesh = new THREE.Mesh(textGeo, textMaterial);
-    mesh.position.set(x,y+radius+5,z);
+    mesh.position.set(x, y + radius + 5, z);
     scene.add(mesh);
   });
   return planet;
@@ -76,8 +75,9 @@ function onWindowResize() {
 }
 
 function configureSun() {
+  const sunPosition = new THREE.Vector3(30, 0, 0);
   const sunLight = new THREE.PointLight(0xffffff, 15000, 0, 2);
-  sunLight.position.set(0, 0, 0);
+  sunLight.position.set(sunPosition.x, sunPosition.y, sunPosition.z);
   const sunMesh = new THREE.Mesh(
     new THREE.SphereGeometry(20, 20, 20),
     new THREE.MeshBasicMaterial({
@@ -102,21 +102,20 @@ function configureSun() {
       size: 2,
       height: 1,
     });
-    const textMaterial = new THREE.MeshPhongMaterial({
+    const textMaterial = new THREE.MeshNormalMaterial({
       color: 0xff0000,
-      specular: 0xffffff,
     });
     const mesh = new THREE.Mesh(textGeo, textMaterial);
-    mesh.position.set(0, 20, 0);
+    mesh.position.set(sunPosition.x, 25, sunPosition.z);
+    mesh.rotation.set(0, 5.5, 0);
     scene.add(mesh);
   });
-  
 }
 
 function configurePlanets() {
   celestialBodiesModels.push({
     instance: createPlanet(
-      60,
+      40,
       0,
       0,
       2.44,
@@ -132,9 +131,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      50,
+      60,
       0,
-      -60,
+      0,
       6.052,
       20,
       20,
@@ -148,9 +147,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
+      100,
       0,
       0,
-      -80,
       6.371,
       20,
       20,
@@ -164,9 +163,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      -55,
+      160,
       0,
-      -90,
+      0,
       3.39,
       20,
       20,
@@ -180,7 +179,7 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      -180,
+      220,
       0,
       0,
       39.911,
@@ -196,9 +195,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      -200,
+      280,
       0,
-      100,
+      0,
       28.232,
       20,
       20,
@@ -212,9 +211,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      -100,
+      340,
       0,
-      200,
+      0,
       15.362,
       20,
       20,
@@ -228,9 +227,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
+      420,
       0,
       0,
-      210,
       14.622,
       20,
       20,
@@ -246,14 +245,14 @@ function configurePlanets() {
 
 function init() {
   configureSun();
-  configurePlanets();  
+  configurePlanets();
 }
 
 const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.autoRotate = true;
+// controls.autoRotate = true;
 
 const rederScene = new RenderPass(scene, camera);
 const composer = new EffectComposer(renderer);
@@ -278,6 +277,44 @@ function animateCelestialBodies() {
     celestialBody.instance.rotation.y += celestialBody.rotationSpeed;
   });
 }
+
+const fibonacciPoints = [];
+const numPoints = 10000; // Number of points along the spiral
+const scale = 10; // Scale of the spiral
+
+for (let i = 0; i < numPoints; i++) {
+  const t = i / numPoints; // Normalized position along the spiral (0 to 1)
+  const angle = 2 * Math.PI * t;
+  const radius = scale * Math.sqrt(t);
+  const x = radius * Math.cos(angle);
+  const y = radius * Math.sin(angle);
+  fibonacciPoints.push(new THREE.Vector3(x, y, 0));
+}
+
+function moveCamera() {
+  const scrollPosition = window.scrollY;
+  const maxScrollPosition = document.body.scrollHeight - window.innerHeight;
+
+  // Calculate the current scroll fraction (0 at the top of the page, 1 at the bottom)
+  const scrollFraction = scrollPosition / maxScrollPosition;
+
+  // Define the rotation angle and distance from the origin
+  const angle = scrollFraction * Math.PI; // Rotate 180 degrees when scrolling from top to bottom
+  const distance = scrollFraction * 100; // Move up to 100 units away from the origin
+
+  // Calculate the new camera position
+  const x = distance * Math.sin(angle);
+  const y = camera.position.y; // Keep the same y-coordinate
+  const z = 50 + distance * Math.cos(angle);
+
+  // Update the camera position
+  camera.position.set(x, y, z);
+
+  // Make the camera look at the origin
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+}
+
+document.body.onscroll = moveCamera;
 
 function animate() {
   requestAnimationFrame(animate);
