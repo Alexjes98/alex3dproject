@@ -10,7 +10,7 @@ import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-  75,
+  50,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
@@ -76,10 +76,10 @@ function onWindowResize() {
 
 function configureSun() {
   const sunPosition = new THREE.Vector3(30, 0, 0);
-  const sunLight = new THREE.PointLight(0xffffff, 15000, 0, 2);
+  const sunLight = new THREE.PointLight(0xffffff, 25000, 0, 1.7);
   sunLight.position.set(sunPosition.x, sunPosition.y, sunPosition.z);
   const sunMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(20, 20, 20),
+    new THREE.SphereGeometry(30, 30, 30),
     new THREE.MeshBasicMaterial({
       depthTest: true,
       map: new THREE.TextureLoader().load("./assets/img/textures/2k_sun.jpg"),
@@ -115,9 +115,9 @@ function configureSun() {
 function configurePlanets() {
   celestialBodiesModels.push({
     instance: createPlanet(
-      40,
+      -120,
       0,
-      0,
+      -110,
       2.44,
       20,
       20,
@@ -131,9 +131,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      60,
+      190,
       0,
-      0,
+      -115,
       6.052,
       20,
       20,
@@ -147,9 +147,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      100,
+      -100,
       0,
-      0,
+      364,
       6.371,
       20,
       20,
@@ -163,7 +163,7 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      160,
+      -350,
       0,
       0,
       3.39,
@@ -179,9 +179,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      220,
+      -330,
       0,
-      0,
+      -234,
       39.911,
       20,
       20,
@@ -252,8 +252,12 @@ const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-// controls.autoRotate = true;
-
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.screenSpacePanning = false;
+controls.minDistance = 10;
+controls.maxDistance = 500;
+controls.autoRotate = true;
 const rederScene = new RenderPass(scene, camera);
 const composer = new EffectComposer(renderer);
 composer.addPass(rederScene);
@@ -291,27 +295,45 @@ for (let i = 0; i < numPoints; i++) {
   fibonacciPoints.push(new THREE.Vector3(x, y, 0));
 }
 
+function lookAtPlanet() {
+  for (let i = 0; i < celestialBodiesModels.length; i++) {
+    console.log(
+      celestialBodiesModels[i].instance.position.distanceTo(camera.position),
+      celestialBodiesModels[i].name
+    );
+    if (
+      celestialBodiesModels[i].instance.position.distanceTo(camera.position) <
+      60
+    ) {
+      controls.target.set(
+        celestialBodiesModels[i].instance.position.x,
+        celestialBodiesModels[i].instance.position.y,
+        celestialBodiesModels[i].instance.position.z
+      );
+      console.log("look at", celestialBodiesModels[i].name);
+      return;
+    }
+  }
+  controls.target.set(0, 0, 0);
+}
+
 function moveCamera() {
   const scrollPosition = window.scrollY;
   const maxScrollPosition = document.body.scrollHeight - window.innerHeight;
-
   // Calculate the current scroll fraction (0 at the top of the page, 1 at the bottom)
   const scrollFraction = scrollPosition / maxScrollPosition;
-
   // Define the rotation angle and distance from the origin
   const angle = scrollFraction * Math.PI; // Rotate 180 degrees when scrolling from top to bottom
   const distance = scrollFraction * 100; // Move up to 100 units away from the origin
-
   // Calculate the new camera position
   const x = distance * Math.sin(angle);
   const y = camera.position.y; // Keep the same y-coordinate
   const z = 50 + distance * Math.cos(angle);
-
   // Update the camera position
   camera.position.set(x, y, z);
-
   // Make the camera look at the origin
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  // camera.lookAt(new THREE.Vector3(0, 0, 0));
+  lookAtPlanet();
 }
 
 document.body.onscroll = moveCamera;

@@ -1,3 +1,6 @@
+* {
+  scroll-behavior: smooth;
+}
 canvas {
   position: fixed;
   top: 0;
@@ -14,7 +17,7 @@ blockquote {
 }
 
 :root {
-  --dark-bg: rgba(15, 15, 15, 0.95);
+  --dark-bg: rgba(15, 15, 15, 0.199);
   --spacing: 350px;
 
   font-family: brandon-grotesque, sans-serif;
