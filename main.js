@@ -263,7 +263,7 @@ const composer = new EffectComposer(renderer);
 composer.addPass(rederScene);
 
 scene.background = new THREE.TextureLoader().load(
-  "/assets/img/textures/2k_stars_milky_way.jpg"
+  "/assets/img/2k_stars_milky_way.jpg"
 );
 
 const bloomPass = new UnrealBloomPass(
