@@ -54,7 +54,7 @@ function createPlanet(
   scene.add(planet);
   //planet name
   const loader = new FontLoader();
-  loader.load("./assets/fonts/optimer_bold.typeface.json", function (font) {
+  loader.load("/assets/fonts/optimer_bold.typeface.json", function (font) {
     const textGeo = new TextGeometry(planetName || "No name", {
       font: font,
       size: 2,
@@ -82,7 +82,7 @@ function configureSun() {
     new THREE.SphereGeometry(30, 30, 30),
     new THREE.MeshBasicMaterial({
       depthTest: true,
-      map: new THREE.TextureLoader().load("./assets/img/textures/2k_sun.jpg"),
+      map: new THREE.TextureLoader().load("/assets/img/textures/2k_sun.jpg"),
     })
   );
   sunLight.add(sunMesh);
@@ -96,7 +96,7 @@ function configureSun() {
   scene.add(sunLight, sunLightHelper);
   //sun name
   const loader = new FontLoader();
-  loader.load("./assets/fonts/optimer_bold.typeface.json", function (font) {
+  loader.load("/assets/fonts/optimer_bold.typeface.json", function (font) {
     const textGeo = new TextGeometry("The sun", {
       font: font,
       size: 2,
@@ -122,7 +122,7 @@ function configurePlanets() {
       20,
       20,
       1,
-      "./assets/img/textures/2k_mercury.jpg",
+      "/assets/img/textures/2k_mercury.jpg",
       "Mercury"
     ),
     rotationSpeed: 0.05,
@@ -138,7 +138,7 @@ function configurePlanets() {
       20,
       20,
       1,
-      "./assets/img/textures/2k_venus_surface.jpg",
+      "/assets/img/textures/2k_venus_surface.jpg",
       "Venus"
     ),
     rotationSpeed: 0.01,
@@ -154,7 +154,7 @@ function configurePlanets() {
       20,
       20,
       1,
-      "./assets/img/textures/2k_earth_daymap.jpg",
+      "/assets/img/textures/2k_earth_daymap.jpg",
       "Earth"
     ),
     rotationSpeed: 0.01,
@@ -170,7 +170,7 @@ function configurePlanets() {
       20,
       20,
       1,
-      "./assets/img/textures/2k_mars.jpg",
+      "/assets/img/textures/2k_mars.jpg",
       "Mars"
     ),
     rotationSpeed: 0.01,
@@ -186,7 +186,7 @@ function configurePlanets() {
       20,
       20,
       1,
-      "./assets/img/textures/2k_jupiter.jpg",
+      "/assets/img/textures/2k_jupiter.jpg",
       "Jupiter"
     ),
     rotationSpeed: 0.01,
@@ -202,7 +202,7 @@ function configurePlanets() {
       20,
       20,
       1,
-      "./assets/img/textures/2k_saturn.jpg",
+      "/assets/img/textures/2k_saturn.jpg",
       "Saturn"
     ),
     rotationSpeed: 0.01,
@@ -218,7 +218,7 @@ function configurePlanets() {
       20,
       20,
       1,
-      "./assets/img/textures/2k_uranus.jpg",
+      "/assets/img/textures/2k_uranus.jpg",
       "Uranus"
     ),
     rotationSpeed: 0.01,
@@ -234,7 +234,7 @@ function configurePlanets() {
       20,
       20,
       1,
-      "./assets/img/textures/2k_neptune.jpg",
+      "/assets/img/textures/2k_neptune.jpg",
       "Neptune"
     ),
     rotationSpeed: 0.01,
@@ -263,7 +263,7 @@ const composer = new EffectComposer(renderer);
 composer.addPass(rederScene);
 
 scene.background = new THREE.TextureLoader().load(
-  "assets/img/2k_stars_milky_way.jpg"
+  "/assets/img/textures/2k_stars_milky_way.jpg"
 );
 
 const bloomPass = new UnrealBloomPass(
