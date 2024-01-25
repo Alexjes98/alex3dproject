@@ -16,7 +16,7 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 const helper = new THREE.CameraHelper(camera);
-scene.add(helper);
+//scene.add(helper);
 const renderer = new THREE.WebGL1Renderer({
   canvas: document.querySelector("#bg"),
 });
@@ -94,7 +94,7 @@ function configureSun() {
     orbitSpeed: 0,
     name: "Sun",
   });
-  scene.add(sunLight, sunLightHelper);
+  scene.add(sunLight /* sunLightHelper*/);
   //sun name
   const loader = new FontLoader();
   loader.load("/assets/fonts/optimer_bold.typeface.json", function (font) {
