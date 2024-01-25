@@ -17,8 +17,8 @@ blockquote {
 }
 
 :root {
-  --dark-bg: rgba(15, 15, 15, 0.199);
-  --spacing: 350px;
+  --dark-bg: rgba(15, 15, 15, 0.007);
+    --spacing: 30px;
 
   font-family: brandon-grotesque, sans-serif;
   font-weight: 400;
@@ -42,7 +42,7 @@ main {
     grid-column: 2 / span 5;
     font-size: 2.5rem;
     padding: 2rem;
-    margin-bottom: var(--spacing);
+    margin-bottom: 500px;
   }
   
   section {
@@ -51,7 +51,7 @@ main {
     background: var(--dark-bg);
     font-size: 1.25rem;
     line-height: 1.5;
-    margin-bottom: var(--spacing);
+    margin-bottom: 150px;
   }
   
   blockquote {
@@ -71,4 +71,7 @@ main {
   
   .left {
     grid-column: 6 / 12;
+}
+.title {
+  margin-bottom: 400px;
 }

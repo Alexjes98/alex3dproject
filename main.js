@@ -63,6 +63,7 @@ function createPlanet(
     const textMaterial = new THREE.MeshNormalMaterial({ color: 0xff0000 });
     const mesh = new THREE.Mesh(textGeo, textMaterial);
     mesh.position.set(x, y + radius + 5, z);
+    mesh.lookAt(0, 0, 0);
     scene.add(mesh);
   });
   return planet;
@@ -115,9 +116,9 @@ function configureSun() {
 function configurePlanets() {
   celestialBodiesModels.push({
     instance: createPlanet(
-      -120,
+      -150,
       0,
-      -110,
+      120,
       2.44,
       20,
       20,
@@ -131,9 +132,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      190,
+      71,
       0,
-      -115,
+      -180,
       6.052,
       20,
       20,
@@ -147,9 +148,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      -100,
+      270,
       0,
-      364,
+      200,
       6.371,
       20,
       20,
@@ -163,9 +164,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      -350,
+      -370,
       0,
-      0,
+      60,
       3.39,
       20,
       20,
@@ -179,9 +180,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      -330,
+      450,
       0,
-      -234,
+      -190,
       39.911,
       20,
       20,
@@ -195,9 +196,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      280,
+      -180,
       0,
-      0,
+      600,
       28.232,
       20,
       20,
@@ -211,9 +212,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      340,
+      -490,
       0,
-      0,
+      -320,
       15.362,
       20,
       20,
@@ -227,9 +228,9 @@ function configurePlanets() {
   });
   celestialBodiesModels.push({
     instance: createPlanet(
-      420,
+      700,
       0,
-      0,
+      40,
       14.622,
       20,
       20,
@@ -249,7 +250,7 @@ function init() {
 }
 
 const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(gridHelper);
+//scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -275,9 +276,27 @@ const bloomPass = new UnrealBloomPass(
 composer.addPass(bloomPass);
 
 window.addEventListener("resize", onWindowResize, false);
+const scrollSpeedFactor = 0.2; // Adjust this value to change the scroll speed
+
+window.addEventListener(
+  "wheel",
+  function (e) {
+    e.preventDefault();
+    window.scrollBy({
+      top: e.deltaY * scrollSpeedFactor,
+      left: 0,
+      behavior: "smooth",
+    });
+  },
+  { passive: false }
+);
 
 function animateCelestialBodies() {
   celestialBodiesModels.forEach((celestialBody) => {
+    if (celestialBody.name === "Venus") {
+      celestialBody.instance.rotation.y -= celestialBody.rotationSpeed;
+      return;
+    }
     celestialBody.instance.rotation.y += celestialBody.rotationSpeed;
   });
 }
@@ -297,20 +316,16 @@ for (let i = 0; i < numPoints; i++) {
 
 function lookAtPlanet() {
   for (let i = 0; i < celestialBodiesModels.length; i++) {
-    console.log(
-      celestialBodiesModels[i].instance.position.distanceTo(camera.position),
-      celestialBodiesModels[i].name
-    );
     if (
-      celestialBodiesModels[i].instance.position.distanceTo(camera.position) <
-      60
+      celestialBodiesModels[i].instance.position.distanceTo(camera.position) -
+        celestialBodiesModels[i].instance.geometry.boundingSphere.radius <
+      80
     ) {
       controls.target.set(
         celestialBodiesModels[i].instance.position.x,
         celestialBodiesModels[i].instance.position.y,
         celestialBodiesModels[i].instance.position.z
       );
-      console.log("look at", celestialBodiesModels[i].name);
       return;
     }
   }
